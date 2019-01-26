@@ -1,0 +1,174 @@
+net
+{
+    node_size = (80 40);
+    HR_realname_dysp = "dysp";
+    HR_realname_xray = "xray";
+    HR_realname_either = "either";
+    HR_realname_bronc = "bronc";
+    HR_realname_lung = "lung";
+    HR_realname_smoke = "smoke";
+    HR_realname_tub = "tub";
+    HR_realname_asia = "asia";
+    HR_DBN_Num_Slices = "5";
+    HR_Desc = "";
+    HR_OOBN_CheckConsistency = "1";
+    HR_OOBN_FitExpand = "1";
+    HR_Zoom_ZoomFactor = "100";
+    HR_Groups_GroupColors = "";
+    HR_Groups_GroupNames = "";
+    HR_Groups_UserGroupsNo = "0";
+    HR_Utility_Link = "63";
+    HR_Probabilistic_Link = "63";
+    HR_Functional_Link = "63";
+    HR_Binding_Link = "63";
+    HR_Information_Arc = "63";
+    HR_Color_Interface = "21";
+    HR_Color_Instance = "0";
+    HR_Color_DiscreteFunction = "5";
+    HR_Color_Function = "4";
+    HR_Color_Utility = "36";
+    HR_Color_Decision = "17";
+    HR_Color_ContinuousChance = "48";
+    HR_Color_DiscreteChance = "16";
+    HR_Monitor_InitSD = "2";
+    HR_Monitor_Utility_Arrange = "0";
+    HR_Monitor_Mean_Variance = "1";
+    HR_Monitor_Chance_Utility = "1";
+    HR_Monitor_InitStates = "5";
+    HR_Monitor_OpenGraph = "0";
+    HR_Monitor_GraphPrecision = "100";
+    HR_Monitor_AutoUpdGraph = "0";
+    HR_Compile_MaxMinimalSeparators = "100000";
+    HR_Compile_ApproxEpsilon = "1.0E-5";
+    HR_Compile_Approximate = "0";
+    HR_Compile_SaveToMemory = "0";
+    HR_Compile_Compress = "0";
+    HR_Compile_TriangMethod = "0";
+    HR_Propagate_AutoNormal = "1";
+    HR_Propagate_AutoSum = "1";
+    HR_Propagate_Auto = "1";
+    HR_Font_Italic = "0";
+    HR_Font_Weight = "400";
+    HR_Font_Size = "-12";
+    HR_Font_Name = "javax.swing.plaf.FontUIResource[family=Dialog,name=Dialog,style=bold,size=12]";
+    HR_Grid_GridShow = "0";
+    HR_Grid_GridSnap = "0";
+    HR_Grid_Y = "40";
+    HR_Grid_X = "40";
+}
+
+node asia
+{
+    position = (40 246);
+    states = ("yes" "no");
+    HR_LinkGroup = "[tub:0]";
+    HR_LinkMode = "[tub:0]";
+}
+
+node tub
+{
+    position = (125 192);
+    states = ("yes" "no");
+    HR_LinkGroup = "[either:0]";
+    HR_LinkMode = "[either:0]";
+}
+
+node smoke
+{
+    position = (457 246);
+    states = ("yes" "no");
+    HR_LinkGroup = "[bronc:0][lung:0]";
+    HR_LinkMode = "[bronc:0][lung:0]";
+}
+
+node lung
+{
+    position = (320 181);
+    states = ("yes" "no");
+    HR_LinkGroup = "[either:0]";
+    HR_LinkMode = "[either:0]";
+}
+
+node bronc
+{
+    position = (455 121);
+    states = ("yes" "no");
+    HR_LinkGroup = "[dysp:0]";
+    HR_LinkMode = "[dysp:0]";
+}
+
+node either
+{
+    position = (214 127);
+    states = ("yes" "no");
+    HR_LinkGroup = "[dysp:0][xray:0]";
+    HR_LinkMode = "[dysp:0][xray:0]";
+}
+
+node xray
+{
+    position = (112 40);
+    states = ("yes" "no");
+}
+
+node dysp
+{
+    position = (452 21);
+    states = ("yes" "no");
+}
+
+potential (asia)
+{
+    data = ( 0.01 0.99 );
+}
+
+potential (tub | asia)
+{
+    data
+     = (( 0.05 0.95 )	%  asia=yes
+	( 0.01 0.99 ));	%  asia=no
+}
+
+potential (smoke)
+{
+    data = ( 0.5 0.5 );
+}
+
+potential (lung | smoke)
+{
+    data
+     = (( 0.1 0.9 )	%  smoke=yes
+	( 0.01 0.99 ));	%  smoke=no
+}
+
+potential (bronc | smoke)
+{
+    data
+     = (( 0.6 0.4 )	%  smoke=yes
+	( 0.3 0.7 ));	%  smoke=no
+}
+
+potential (either | lung tub)
+{
+    data
+     = ((( 1 0 )	%  lung=yes  tub=yes
+	 ( 1 0 ))	%  lung=yes  tub=no
+	(( 1 0 )	%  lung=no  tub=yes
+	 ( 0 1 )));	%  lung=no  tub=no
+}
+
+potential (xray | either)
+{
+    data
+     = (( 0.98 0.02 )	%  either=yes
+	( 0.05 0.95 ));	%  either=no
+}
+
+potential (dysp | bronc either)
+{
+    data
+     = ((( 0.9 0.1 )	%  bronc=yes  either=yes
+	 ( 0.8 0.2 ))	%  bronc=yes  either=no
+	(( 0.7 0.3 )	%  bronc=no  either=yes
+	 ( 0.1 0.9 )));	%  bronc=no  either=no
+}
